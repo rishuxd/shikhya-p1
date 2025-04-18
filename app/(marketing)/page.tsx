@@ -1,19 +1,8 @@
 'use client'
 
-import {
-  Box,
-  Container,
-  HStack,
-  Heading,
-  Icon,
-  Tag,
-  Text,
-  Wrap,
-  theme,
-} from '@chakra-ui/react'
-import { transparentize } from '@chakra-ui/theme-tools'
+import { Box, Container, HStack, Heading, Icon, Text } from '@chakra-ui/react'
 import { Br, Link } from '@saas-ui/react'
-import type { Metadata, NextPage } from 'next'
+import type { NextPage } from 'next'
 import Image from 'next/image'
 import {
   FiActivity,
@@ -39,11 +28,6 @@ import Upload from '#components/custom/upload'
 import { Features } from '#components/features'
 import { BackgroundGradient } from '#components/gradients/background-gradient'
 import { Hero } from '#components/hero'
-import {
-  Highlights,
-  HighlightsItem,
-  HighlightsTestimonialItem,
-} from '#components/highlights'
 import { ChakraLogo, NextjsLogo } from '#components/logos'
 import { FallInPlace } from '#components/motion/fall-in-place'
 import { Section } from '#components/section'
@@ -54,13 +38,11 @@ const Home: NextPage = () => {
     <Box>
       <HeroSection />
 
-      <HighlightsSection />
-
       <ScrollingCardsSection />
 
-      <FeaturesSection />
+      <WorkFlowSection />
 
-      <PricingSection />
+      <DemoSection />
     </Box>
   )
 }
@@ -96,7 +78,7 @@ const HeroSection: React.FC = () => {
             <ButtonLink
               colorScheme="primary"
               size="md"
-              href="/signup"
+              href="/#demo"
               rightIcon={
                 <Icon
                   as={FiArrowRight}
@@ -151,11 +133,10 @@ const HeroSection: React.FC = () => {
       </Box>
 
       <Features
-        id="benefits"
+        id="features"
         columns={[1, 2, 4]}
         iconSize={4}
         innerWidth="container.xl"
-        pt="20"
         features={[
           {
             title: 'Detection',
@@ -193,73 +174,6 @@ const HeroSection: React.FC = () => {
         reveal={FallInPlace}
       />
     </Box>
-  )
-}
-
-const HighlightsSection = () => {
-  return (
-    <Highlights py="10">
-      <HighlightsTestimonialItem
-        name="Shiksha Upanita"
-        description="Founder"
-        avatar="/static/images/avatar.jpg"
-        gradient={['pink.200', 'purple.500']}
-      >
-        “A creative coder passionate about making ideas come to life. I worked
-        on the front-end design and system integration for this project.”
-      </HighlightsTestimonialItem>
-      <HighlightsTestimonialItem
-        name="Deepika Singh"
-        description="Founder"
-        avatar="/static/images/avatar.jpg"
-        gradient={['pink.200', 'purple.500']}
-      >
-        “A tech enthusiast who loves turning ideas into real-world solutions. I
-        built and trained the detection model for this project.”
-      </HighlightsTestimonialItem>
-
-      <HighlightsItem p="0">
-        <Box
-          p="8"
-          bgGradient={`linear(to-br, ${transparentize(
-            'pink.200',
-            0.8,
-          )(theme)}, ${transparentize('purple.500', 0.8)(theme)})`}
-        >
-          <Wrap>
-            {[
-              'authentication',
-              'navigation',
-              'crud',
-              'settings',
-              'multi-tenancy',
-              'layouts',
-              'billing',
-              'a11y testing',
-              'server-side rendering',
-              'documentation',
-              'onboarding',
-              'storybooks',
-              'theming',
-              'upselling',
-              'unit testing',
-              'feature flags',
-              'responsiveness',
-            ].map((value) => (
-              <Tag
-                key={value}
-                variant="subtle"
-                colorScheme="purple"
-                rounded="full"
-                px="3"
-              >
-                {value}
-              </Tag>
-            ))}
-          </Wrap>
-        </Box>
-      </HighlightsItem>
-    </Highlights>
   )
 }
 
@@ -434,12 +348,11 @@ const ScrollingCardsSection = () => {
   )
 }
 
-const FeaturesSection = () => {
+const WorkFlowSection = () => {
   return (
     <Features
-      pt="8"
       pb="36"
-      id="features"
+      id="workflow"
       title={
         <Heading
           lineHeight="short"
@@ -536,9 +449,9 @@ const FeaturesSection = () => {
   )
 }
 
-const PricingSection = () => {
+const DemoSection = () => {
   return (
-    <Section id="pricing" pos="relative">
+    <Section id="demo" pos="relative">
       <BackgroundGradient height="100%" />
       <Box zIndex="2" pos="relative">
         <Text fontSize={'4xl'} fontWeight="bold" textAlign={'center'} mb="4">

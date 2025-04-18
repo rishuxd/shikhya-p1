@@ -1,7 +1,6 @@
 import { HStack } from '@chakra-ui/react'
 import { useDisclosure, useUpdateEffect } from '@chakra-ui/react'
 import { useScrollSpy } from 'hooks/use-scrollspy'
-import { usePathname, useRouter } from 'next/navigation'
 
 import * as React from 'react'
 
@@ -14,8 +13,7 @@ import ThemeToggle from './theme-toggle'
 
 const Navigation: React.FC = () => {
   const mobileNav = useDisclosure()
-  const router = useRouter()
-  const path = usePathname()
+
   const activeId = useScrollSpy(
     siteConfig.header.links
       .filter(({ id }) => id)
@@ -33,18 +31,13 @@ const Navigation: React.FC = () => {
 
   return (
     <HStack spacing="2" flexShrink={0}>
-      {siteConfig.header.links.map(({ href, id, ...props }, i) => {
+      {siteConfig.header.links.map(({ id, ...props }, i) => {
         return (
           <NavLink
             display={['none', null, 'block']}
-            href={href || `/#${id}`}
+            href={`/#${id}`}
             key={i}
-            isActive={
-              !!(
-                (id && activeId === id) ||
-                (href && !!path?.match(new RegExp(href)))
-              )
-            }
+            isActive={!!(id && activeId === id)}
             {...props}
           >
             {props.label}

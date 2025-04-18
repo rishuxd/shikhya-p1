@@ -1,9 +1,14 @@
 'use client'
 
 import {
+  Alert,
+  AlertDescription,
+  AlertIcon,
+  AlertTitle,
   Box,
   Button,
   Center,
+  CloseButton,
   Flex,
   Icon,
   Input,
@@ -30,6 +35,11 @@ interface FileUploadProgress {
   progress: number
   File: File
   source: CancelTokenSource | null
+}
+
+interface StatusMessage {
+  type: 'success' | 'error'
+  message: string
 }
 
 enum FileTypes {
@@ -66,8 +76,11 @@ const OtherColor = {
 }
 
 export default function Upload() {
-  const [uploadedFiles, setUploadedFiles] = useState<File[]>([])
-  const [filesToUpload, setFilesToUpload] = useState<FileUploadProgress[]>([])
+  const [uploadedFile, setUploadedFile] = useState<File | null>(null)
+  const [fileToUpload, setFileToUpload] = useState<FileUploadProgress | null>(
+    null,
+  )
+  const [statusMessage, setStatusMessage] = useState<StatusMessage | null>(null)
 
   const bgColor = useColorModeValue('gray.50', 'gray.700')
   const hoverBgColor = useColorModeValue('gray.100', 'gray.600')
@@ -112,8 +125,6 @@ export default function Upload() {
     }
   }
 
-  // feel free to move all these functions to separate utils
-  // here is just for simplicity
   const onUploadProgress = (
     progressEvent: AxiosProgressEvent,
     file: File,
@@ -124,98 +135,110 @@ export default function Upload() {
     )
 
     if (progress === 100) {
-      setUploadedFiles((prevUploadedFiles) => {
-        return [...prevUploadedFiles, file]
+      setUploadedFile(file)
+      setFileToUpload(null)
+      setStatusMessage({
+        type: 'success',
+        message: `Successfully uploaded ${file.name}`,
       })
-
-      setFilesToUpload((prevUploadProgress) => {
-        return prevUploadProgress.filter((item) => item.File !== file)
-      })
-
       return
     }
 
-    setFilesToUpload((prevUploadProgress) => {
-      return prevUploadProgress.map((item) => {
-        if (item.File.name === file.name) {
-          return {
-            ...item,
-            progress,
-            source: cancelSource,
-          }
-        } else {
-          return item
-        }
-      })
+    setFileToUpload({
+      progress,
+      File: file,
+      source: cancelSource,
     })
   }
 
-  const uploadImageToCloudinary = async (
+  const uploadFileToServer = async (
     formData: FormData,
     onUploadProgress: (progressEvent: AxiosProgressEvent) => void,
     cancelSource: CancelTokenSource,
   ) => {
-    return axios.post(
-      `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUD_NAME}/image/upload`,
-      formData,
-      {
-        onUploadProgress,
-        cancelToken: cancelSource.token,
+    return axios.post('https://your-custom-server-url.com/upload', formData, {
+      onUploadProgress,
+      cancelToken: cancelSource.token,
+      headers: {
+        'Content-Type': 'multipart/form-data',
+        // Add any authentication headers if needed
+        // 'Authorization': 'Bearer your-auth-token'
       },
-    )
-  }
-
-  const removeFile = (file: File) => {
-    setFilesToUpload((prevUploadProgress) => {
-      return prevUploadProgress.filter((item) => item.File !== file)
-    })
-
-    setUploadedFiles((prevUploadedFiles) => {
-      return prevUploadedFiles.filter((item) => item !== file)
     })
   }
 
-  const onDrop = useCallback(async (acceptedFiles: File[]) => {
-    setFilesToUpload((prevUploadProgress) => {
-      return [
-        ...prevUploadProgress,
-        ...acceptedFiles.map((file) => {
-          return {
-            progress: 0,
-            File: file,
-            source: null,
-          }
-        }),
-      ]
-    })
+  const removeFile = () => {
+    setFileToUpload(null)
+    setUploadedFile(null)
+    setStatusMessage(null)
+  }
 
-    // cloudinary upload
+  const onDrop = useCallback(
+    async (acceptedFiles: File[]) => {
+      if (acceptedFiles.length === 0) return
 
-    // const fileUploadBatch = acceptedFiles.map((file) => {
-    //   const formData = new FormData();
-    //   formData.append("file", file);
-    //   formData.append(
-    //     "upload_preset",
-    //     process.env.NEXT_PUBLIC_UPLOAD_PRESET as string
-    //   );
+      // Clear any previous status messages
+      setStatusMessage(null)
 
-    //   const cancelSource = axios.CancelToken.source();
-    //   return uploadImageToCloudinary(
-    //     formData,
-    //     (progressEvent) => onUploadProgress(progressEvent, file, cancelSource),
-    //     cancelSource
-    //   );
-    // });
+      const file = acceptedFiles[0]
 
-    // try {
-    //   await Promise.all(fileUploadBatch);
-    //   alert("All files uploaded successfully");
-    // } catch (error) {
-    //   console.error("Error uploading files: ", error);
-    // }
-  }, [])
+      if (fileToUpload?.source) {
+        fileToUpload.source.cancel('Upload cancelled due to new file!')
+      }
 
-  const { getRootProps, getInputProps } = useDropzone({ onDrop })
+      setFileToUpload({
+        progress: 0,
+        File: file,
+        source: null,
+      })
+
+      const formData = new FormData()
+      formData.append('file', file)
+
+      const cancelSource = axios.CancelToken.source()
+
+      setFileToUpload((prev) =>
+        prev
+          ? {
+              ...prev,
+              source: cancelSource,
+            }
+          : null,
+      )
+
+      try {
+        await uploadFileToServer(
+          formData,
+          (progressEvent) =>
+            onUploadProgress(progressEvent, file, cancelSource),
+          cancelSource,
+        )
+        console.log('File uploaded successfully.')
+      } catch (error) {
+        if (axios.isCancel(error)) {
+          console.log('Upload cancelled!')
+          setStatusMessage({
+            type: 'error',
+            message: 'Upload cancelled!',
+          })
+        } else {
+          console.error('Error uploading file: ', error)
+          setStatusMessage({
+            type: 'error',
+            message: `Error uploading file: ${error instanceof Error ? error.message : 'Unknown error'}`,
+          })
+          setFileToUpload(null)
+        }
+      }
+    },
+    [fileToUpload],
+  )
+
+  const { getRootProps, getInputProps } = useDropzone({
+    onDrop,
+    maxFiles: 1, // Only allow one file to be selected/dropped
+    multiple: false, // Disable multiple file selection in the file browser
+  })
 
   return (
     <Box>
@@ -251,28 +274,29 @@ export default function Upload() {
 
               <Text mt={2} fontSize="sm" color={mutedTextColor}>
                 <Text as="span" fontWeight="semibold">
-                  Drag files
+                  Drag a file
                 </Text>
               </Text>
               <Text fontSize="xs" color={mutedTextColorLight}>
-                Click to upload files &#40;files should be under 10 MB&#41;
+                Click to upload a file &#40;file should be under 10 MB&#41;
               </Text>
             </Stack>
           </Center>
         </Box>
 
-        {/* <Input
+        <Input
           {...getInputProps()}
           id="dropzone-file"
           accept="image/png, image/jpeg"
           type="file"
           display="none"
-        /> */}
+          size="sm"
+        />
       </Box>
 
-      {filesToUpload.length > 0 && (
+      {fileToUpload && (
         <Box>
-          <Box maxH="40" overflowY="auto" pr={3}>
+          <Box maxH="40" overflowY="auto" pr={0}>
             <Text
               fontWeight="medium"
               my={2}
@@ -280,16 +304,14 @@ export default function Upload() {
               color={mutedTextColor}
               fontSize="sm"
             >
-              Files to upload
+              Uploading file
             </Text>
             <Stack spacing={2}>
-              {filesToUpload.map((fileUploadProgress) => {
-                const { icon, color } = getFileIconAndColor(
-                  fileUploadProgress.File,
-                )
+              {(() => {
+                const { icon, color } = getFileIconAndColor(fileToUpload.File)
                 return (
                   <Flex
-                    key={fileUploadProgress.File.lastModified}
+                    key={fileToUpload.File.lastModified}
                     justifyContent="space-between"
                     gap={2}
                     borderRadius="lg"
@@ -306,14 +328,12 @@ export default function Upload() {
                       <Box w="full" ml={2}>
                         <Flex justifyContent="space-between" fontSize="sm">
                           <Text color={mutedTextColor}>
-                            {fileUploadProgress.File.name.slice(0, 25)}
+                            {fileToUpload.File.name.slice(0, 25)}
                           </Text>
-                          <Text fontSize="xs">
-                            {fileUploadProgress.progress}%
-                          </Text>
+                          <Text fontSize="xs">{fileToUpload.progress}%</Text>
                         </Flex>
                         <Progress
-                          value={fileUploadProgress.progress}
+                          value={fileToUpload.progress}
                           colorScheme={color.split('.')[0]}
                           size="sm"
                           mt={1}
@@ -322,9 +342,9 @@ export default function Upload() {
                     </Flex>
                     <Button
                       onClick={() => {
-                        if (fileUploadProgress.source)
-                          fileUploadProgress.source.cancel('Upload cancelled')
-                        removeFile(fileUploadProgress.File)
+                        if (fileToUpload.source)
+                          fileToUpload.source.cancel('Upload cancelled')
+                        removeFile()
                       }}
                       bg="red.500"
                       color="white"
@@ -343,13 +363,13 @@ export default function Upload() {
                     </Button>
                   </Flex>
                 )
-              })}
+              })()}
             </Stack>
           </Box>
         </Box>
       )}
 
-      {uploadedFiles.length > 0 && (
+      {uploadedFile && (
         <Box>
           <Text
             fontWeight="medium"
@@ -358,14 +378,14 @@ export default function Upload() {
             color={mutedTextColor}
             fontSize="sm"
           >
-            Uploaded Files
+            Uploaded File
           </Text>
           <Stack spacing={2} pr={3}>
-            {uploadedFiles.map((file) => {
-              const { icon } = getFileIconAndColor(file)
+            {(() => {
+              const { icon } = getFileIconAndColor(uploadedFile)
               return (
                 <Flex
-                  key={file.lastModified}
+                  key={uploadedFile.lastModified}
                   justifyContent="space-between"
                   gap={2}
                   borderRadius="lg"
@@ -382,13 +402,13 @@ export default function Upload() {
                     <Box w="full" ml={2}>
                       <Flex justifyContent="space-between" fontSize="sm">
                         <Text color={mutedTextColor}>
-                          {file.name.slice(0, 25)}
+                          {uploadedFile.name.slice(0, 25)}
                         </Text>
                       </Flex>
                     </Box>
                   </Flex>
                   <Button
-                    onClick={() => removeFile(file)}
+                    onClick={() => removeFile()}
                     bg="red.500"
                     color="white"
                     transition="all"
@@ -405,9 +425,30 @@ export default function Upload() {
                   </Button>
                 </Flex>
               )
-            })}
+            })()}
           </Stack>
         </Box>
+      )}
+
+      {statusMessage && (
+        <Alert
+          status={statusMessage.type}
+          variant="subtle"
+          mt={4}
+          borderRadius="xl"
+        >
+          <AlertIcon />
+          <Box flex="1">
+            <AlertDescription display="block" color="gray.600" fontSize="md">
+              {statusMessage.message}
+            </AlertDescription>
+          </Box>
+          <CloseButton
+            alignSelf="flex-start"
+            position="relative"
+            onClick={() => setStatusMessage(null)}
+          />
+        </Alert>
       )}
     </Box>
   )

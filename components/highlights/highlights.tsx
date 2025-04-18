@@ -30,6 +30,7 @@ export const HighlightsItem: React.FC<HighlightBoxProps> = (props) => {
       overflow="hidden"
       position="relative"
       bg="white"
+      bgColor={'gray.500'}
       _dark={{ bg: 'gray.800' }}
       {...rest}
     >
@@ -56,12 +57,7 @@ export const HighlightsTestimonialItem: React.FC<
   } = props
   const theme = useTheme()
   return (
-    <HighlightsItem
-      justifyContent="center"
-      _dark={{ borderColor: 'whiteAlpha.300' }}
-      p="4"
-      {...rest}
-    >
+    <HighlightsItem justifyContent="center" p="4" {...rest}>
       <Box
         bgGradient={`linear(to-br, ${transparentize(
           gradient[0],
@@ -72,7 +68,6 @@ export const HighlightsTestimonialItem: React.FC<
         inset="0px"
         pointerEvents="none"
         zIndex="0"
-        _dark={{ opacity: 0.5, filter: 'blur(50px)' }}
       />
       <Testimonial
         name={name}
