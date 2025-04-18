@@ -1,4 +1,4 @@
-import { Box, Flex, Heading, VisuallyHidden } from '@chakra-ui/react'
+import { Box, Flex, Heading, Text, VisuallyHidden } from '@chakra-ui/react'
 import { Link } from '@saas-ui/react'
 
 import * as React from 'react'
@@ -13,12 +13,13 @@ export interface LogoProps {
 export const Logo = ({ href = '/', onClick }: LogoProps) => {
   let logo
   if (siteConfig.logo) {
-    logo = <Box as={siteConfig.logo} height="32px" mt="-4px" />
-  } else {
     logo = (
-      <Heading as="h1" size="md">
-        {siteConfig.seo?.title}
-      </Heading>
+      <>
+        <Box as={siteConfig.logo} height="32px" mt="-4px"></Box>
+        <Text as="h1" size="md">
+          {siteConfig.seo?.title}
+        </Text>
+      </>
     )
   }
 
