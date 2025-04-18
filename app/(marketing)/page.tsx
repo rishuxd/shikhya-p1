@@ -57,15 +57,12 @@ const HeroSection: React.FC = () => {
         mt={20}
         w="100%"
         title={
-          <FallInPlace delay={0.2}>
-            Label beautifully, faster & efficiently
-          </FallInPlace>
+          <FallInPlace delay={0.2}>Label faster & efficiently</FallInPlace>
         }
         description={
           <FallInPlace delay={0.4}>
             Imagine a system that can intelligently scan video frames, instantly{' '}
-            <Em>identifying and labeling object with precision</Em>, that&apos;s
-            us.
+            <Em>identify and label objects with precision</Em>, that&apos;s us.
           </FallInPlace>
         }
       >
@@ -360,16 +357,15 @@ const WorkFlowSection = () => {
           textAlign="left"
           as="p"
         >
-          Not your standard
-          <Br /> dashboard template.
+          Not your typical
+          <Br /> object annotation pipeline.
         </Heading>
       }
       description={
         <>
-          Saas UI Pro includes everything you need to build modern frontends.
-          <Br />
-          Use it as a template for your next product or foundation for your
-          design system.
+          Our system transforms raw video frames into precise, labeled insights
+          — all automated, all real-time. Upload, detect, track, and visualize
+          effortlessly.
         </>
       }
       align="left"
@@ -377,71 +373,66 @@ const WorkFlowSection = () => {
       iconSize={4}
       features={[
         {
-          title: '#components.',
+          title: '#dataupload.',
           icon: FiBox,
           description:
-            'All premium components are available on a private NPM registery, no more copy pasting and always up-to-date.',
+            'Seamless data ingestion supporting multiple formats, with drag-and-drop interface and automated validation to ensure quality before processing begins.',
           variant: 'inline',
         },
         {
-          title: 'Starterkits.',
+          title: 'Labeling tools.',
           icon: FiLock,
           description:
-            'Example apps in Next.JS, Electron. Including authentication, billing, example pages, everything you need to get started FAST.',
+            'Comprehensive annotation workspace with customizable labeling options, collaborative features, and quality control mechanisms for creating high-quality training datasets.',
           variant: 'inline',
         },
         {
-          title: 'Documentation.',
+          title: 'Model training.',
           icon: FiSearch,
           description:
-            'Extensively documented, including storybooks, best practices, use-cases and examples.',
+            'Intuitive interface for configuring and launching training jobs with real-time monitoring, performance metrics, and easy hyperparameter tuning.',
           variant: 'inline',
         },
         {
-          title: 'Onboarding.',
+          title: 'Whats the catch?',
           icon: FiUserPlus,
           description:
-            'Add user onboarding flows, like tours, hints and inline documentation without breaking a sweat.',
+            'We do not eliminate manual labeling—we transform it. Our model auto-labels data, cutting human effort by 80%. Experts shift from full labeling to quick verification, fueling continuous improvement through periodic retraining.',
           variant: 'inline',
         },
         {
-          title: 'Feature flags.',
+          title: 'Verification workflow.',
           icon: FiFlag,
           description:
-            "Implement feature toggles for your billing plans with easy to use hooks. Connect Flagsmith, or other remote config services once you're ready.",
+            'Streamlined interface for experts to quickly review and approve model-generated labels, focusing human effort on edge cases and maintaining dataset quality.',
           variant: 'inline',
         },
         {
-          title: 'Upselling.',
+          title: 'Periodic retraining.',
           icon: FiTrendingUp,
           description:
-            '#components and hooks for upgrade flows designed to make upgrading inside your app frictionless.',
+            'Automated incremental training schedules that continuously improve model accuracy by incorporating newly verified labeled data without disrupting production systems.',
           variant: 'inline',
         },
         {
-          title: 'Themes.',
+          title: 'Accuracy tracking.',
           icon: FiToggleLeft,
           description:
-            'Includes multiple themes with darkmode support, always have the perfect starting point for your next project.',
+            'Comprehensive metrics dashboard showing model improvement over time, with clear visibility into how each retraining cycle enhances performance toward target accuracy goals.',
           variant: 'inline',
         },
         {
-          title: 'Generators.',
+          title: 'Resource optimization.',
           icon: FiTerminal,
           description:
-            'Extend your design system while maintaininig code quality and consistency with built-in generators.',
+            'Intelligent workload distribution between automated and manual labeling processes, drastically reducing time and cost while maintaining rigorous quality standards.',
           variant: 'inline',
         },
         {
-          title: 'Monorepo.',
+          title: 'Scalability framework.',
           icon: FiCode,
-          description: (
-            <>
-              All code is available as packages in a high-performance{' '}
-              <Link href="https://turborepo.com">Turborepo</Link>, you have full
-              control to modify and adjust it to your workflow.
-            </>
-          ),
+          description:
+            'Enterprise-grade architecture designed to handle billions of images while efficiently managing the growing pool of model-generated labels and verified training data.',
           variant: 'inline',
         },
       ]}

@@ -57,7 +57,7 @@ export const HighlightsTestimonialItem: React.FC<
   } = props
   const theme = useTheme()
   return (
-    <HighlightsItem justifyContent="center" p="4" {...rest}>
+    <HighlightsItem justifyContent="center" p="" {...rest}>
       <Box
         bgGradient={`linear(to-br, ${transparentize(
           gradient[0],

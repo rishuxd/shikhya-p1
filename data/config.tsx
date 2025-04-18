@@ -34,7 +34,7 @@ const siteConfig = {
       <>
         Built by{' '}
         <Link href="https://www.linkedin.com/in/jyotiswaroop-srivastava/">
-          Jyotiswaroop Srivastava
+          Shiksha Upanita
         </Link>
       </>
     ),

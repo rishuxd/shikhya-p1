@@ -105,7 +105,7 @@ const HighlightsSection = () => {
         border={0}
         name="Shiksha Upanita"
         description="Founder"
-        avatar="/static/images/avatar.jpg"
+        avatar="/static/images/img.jpg"
         gradient={['pink.200', 'purple.500']}
       >
         “A creative coder passionate about making ideas come to life. I worked
@@ -115,7 +115,7 @@ const HighlightsSection = () => {
         border={0}
         name="Deepika Singh"
         description="Founder"
-        avatar="/static/images/avatar.jpg"
+        avatar="/static/images/deepika.jpg"
         gradient={['pink.200', 'purple.500']}
       >
         “A tech enthusiast who loves turning ideas into real-world solutions. I
@@ -132,20 +132,20 @@ const HighlightsSection = () => {
         >
           <Wrap>
             {[
-              'authentication',
-              'navigation',
-              'crud',
-              'settings',
-              'multi-tenancy',
-              'layouts',
-              'billing',
-              'a11y testing',
-              'server-side rendering',
-              'documentation',
-              'onboarding',
-              'storybooks',
-              'testing',
-              'design system',
+              'Object Detection',
+              'YOLOv8',
+              'DeepSORT',
+              'Real-time Detection',
+              'Multi-Object Tracking',
+              'Bounding Box Annotation',
+              'Computer Vision',
+              'Machine Learning',
+              'Model Inference',
+              'OpenCV',
+              'Python',
+              'Dataset Training',
+              'Surveillance Automation',
+              'Frame Analysis',
             ].map((value) => (
               <Tag
                 key={value}
